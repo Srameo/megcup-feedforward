@@ -11,25 +11,23 @@ from megengine import functional as F
 ##########################################################################
 
 class FeedForward(M.Module):
-    def __init__(self, dim, ffn_expansion_factor, bias, kernel_size=7, dilated_rate=3):
-        super().__init__()
-
+    def __init__(self, dim, ffn_expansion_factor, bias):
+        super(FeedForward, self).__init__()
         hidden_features = int(dim * ffn_expansion_factor)
+
         self.project_in = M.Conv2d(
             dim, hidden_features * 2, kernel_size=1, bias=bias)
-        padding = (kernel_size * dilated_rate - dilated_rate) // 2
-        self.dwconv = M.Conv2d(hidden_features, hidden_features, kernel_size=3,
-                               stride=1, padding=1, groups=hidden_features, bias=bias)
-        self.lkconv = M.Conv2d(hidden_features, hidden_features, kernel_size=kernel_size,
-                               dilation=dilated_rate, stride=1, padding=padding,
-                               groups=hidden_features, bias=bias)
+
+        self.dwconv = M.Conv2d(hidden_features * 2, hidden_features * 2, kernel_size=5, stride=1,
+                               padding=4, dilation=2, groups=hidden_features * 2, bias=bias)
+
         self.project_out = M.Conv2d(
             hidden_features, dim, kernel_size=1, bias=bias)
 
     def forward(self, x):
         x = self.project_in(x)
-        x1, x2 = F.split(x, 2, axis=1)
-        x = F.gelu(self.dwconv(x1)) * self.lkconv(x2)
+        x1, x2 = F.split(self.dwconv(x), 2, axis=1)
+        x = F.gelu(x1) * x2
         x = self.project_out(x)
         return x
 
