@@ -1,4 +1,5 @@
 import math
+from turtle import st
 import numpy as np
 
 import megengine as mge
@@ -201,6 +202,11 @@ class FeedbackRestormer(M.Module):
     ):
         super().__init__()
 
+        mean = mge.tensor(np.array([0.08958147, 0.11184454, 0.11297596, 0.09162903]).reshape((1,4,1,1)), dtype='float32')
+        std = mge.tensor(np.array([0.06037381, 0.09139108, 0.09338845, 0.06839059]).reshape((1,4,1,1)), dtype='float32')
+        self.mean = mge.Parameter(mean, is_const=True)
+        self.std = mge.Parameter(std, is_const=True)
+
         self.num_steps = num_steps
         self.num_blocks = num_blocks
 
@@ -223,7 +229,14 @@ class FeedbackRestormer(M.Module):
             num_reroute_feats
         )
 
+    def norm(self, x):
+        return (x - self.mean) / self.std
+
+    def renorm(self, x):
+        return x * self.std + self.mean
+
     def forward(self, x):
+        x = self.norm(x)
         shortcut = x
         init_feat = self.conv_in(x)
         x_list = []
@@ -233,4 +246,4 @@ class FeedbackRestormer(M.Module):
             last_feats_list = self.block(init_feat, last_feats_list)
             x_list.append(self.conv_out(last_feats_list[-1]) + shortcut)
 
-        return x_list
+        return self.renorm(x_list[-1])
