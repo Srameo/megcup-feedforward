@@ -16,10 +16,12 @@ class FeedForward(M.Module):
         hidden_features = int(dim * ffn_expansion_factor)
 
         self.project_in = M.Conv2d(
-            dim, hidden_features * 2, kernel_size=1, bias=bias)
+            dim, hidden_features*2, kernel_size=1, bias=bias)
 
-        self.dwconv = M.Conv2d(hidden_features * 2, hidden_features * 2, kernel_size=5, stride=1,
-                               padding=4, dilation=2, groups=hidden_features * 2, bias=bias)
+        self.dwconv = M.Conv2d(hidden_features*2, hidden_features*2,
+                               kernel_size=5, stride=1,
+                               padding=4, dilation=2,
+                               groups=hidden_features*2, bias=bias)
 
         self.project_out = M.Conv2d(
             hidden_features, dim, kernel_size=1, bias=bias)
@@ -106,7 +108,7 @@ class PDConvFuse(M.Module):
         super().__init__()
         self.feature_num = feature_num
 
-        self.pwconv = M.Conv2d(feature_num * in_channels,
+        self.pwconv = M.Conv2d(feature_num*in_channels,
                                in_channels, 1, 1, 0, bias=bias)
         self.dwconv = M.Conv2d(in_channels, in_channels,
                                3, 1, 1, bias=bias, groups=in_channels)
@@ -119,7 +121,7 @@ class SimpleGateFuse(M.Module):
     def __init__(self, in_channels, feature_num=2, bias=True):
         super().__init__()
         hidden_channel = 2 * in_channels
-        self.conv1x1 = M.Conv2d(in_channels * feature_num,
+        self.conv1x1 = M.Conv2d(in_channels*feature_num,
                                 hidden_channel, 1, 1, 0, bias=bias)
 
     def forward(self, inp_feats):
@@ -142,7 +144,8 @@ class FeedbackBlock(M.Module):
         self.num_blocks = num_blocks
 
         self.trans_list = [
-            TransformerBlock(dim=32, num_heads=4, ffn_expansion_factor=1.2) for _ in range(num_blocks)
+            TransformerBlock(dim=32, num_heads=4, ffn_expansion_factor=1.2)
+            for _ in range(num_blocks)
         ]
 
         self.skip_blocks = [
