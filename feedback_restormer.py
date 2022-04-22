@@ -7,7 +7,7 @@ from megengine import functional as F
 
 
 ##########################################################################
-## Restormer
+# Restormer
 ##########################################################################
 
 class FeedForward(M.Module):
@@ -15,13 +15,16 @@ class FeedForward(M.Module):
         super().__init__()
 
         hidden_features = int(dim * ffn_expansion_factor)
-        self.project_in = M.Conv2d(dim, hidden_features * 2, kernel_size=1, bias=bias)
+        self.project_in = M.Conv2d(
+            dim, hidden_features * 2, kernel_size=1, bias=bias)
         padding = (kernel_size * dilated_rate - dilated_rate) // 2
-        self.dwconv = M.Conv2d(hidden_features, hidden_features, kernel_size=3, stride=1, padding=1, groups=hidden_features, bias=bias)
+        self.dwconv = M.Conv2d(hidden_features, hidden_features, kernel_size=3,
+                               stride=1, padding=1, groups=hidden_features, bias=bias)
         self.lkconv = M.Conv2d(hidden_features, hidden_features, kernel_size=kernel_size,
-                                dilation=dilated_rate, stride=1, padding=padding,
-                                groups=hidden_features, bias=bias)
-        self.project_out = M.Conv2d(hidden_features, dim, kernel_size=1, bias=bias)
+                               dilation=dilated_rate, stride=1, padding=padding,
+                               groups=hidden_features, bias=bias)
+        self.project_out = M.Conv2d(
+            hidden_features, dim, kernel_size=1, bias=bias)
 
     def forward(self, x):
         x = self.project_in(x)
@@ -38,15 +41,16 @@ class Attention(M.Module):
         self.temperature = mge.Parameter(F.ones((num_heads, 1, 1)))
 
         self.qkv = M.Conv2d(dim, dim*3, kernel_size=1, bias=bias)
-        self.qkv_dwconv = M.Conv2d(dim*3, dim*3, kernel_size=3, stride=1, padding=1, groups=dim*3, bias=bias)
+        self.qkv_dwconv = M.Conv2d(
+            dim*3, dim*3, kernel_size=3, stride=1, padding=1, groups=dim*3, bias=bias)
         self.project_out = M.Conv2d(dim, dim, kernel_size=1, bias=bias)
         self.softmax = M.Softmax(axis=-1)
-                
+
     def forward(self, x):
-        b,c,h,w = x.shape
+        b, c, h, w = x.shape
 
         qkv = self.qkv_dwconv(self.qkv(x))
-        q,k,v = F.split(qkv, 3, axis=1)   
+        q, k, v = F.split(qkv, 3, axis=1)
         q = q.reshape(b, self.num_heads, c//self.num_heads, -1)
         k = k.reshape(b, self.num_heads, c//self.num_heads, -1)
         v = v.reshape(b, self.num_heads, c//self.num_heads, -1)
@@ -58,7 +62,7 @@ class Attention(M.Module):
         attn = self.softmax(attn)
 
         out = F.matmul(attn, v)
-        
+
         out = out.reshape(b, -1, h, w)
         out = self.project_out(out)
         return out
@@ -68,8 +72,10 @@ class LayerNorm(M.Module):
     def __init__(self, channels, eps=1e-5):
         super().__init__()
         self.eps = eps
-        self.weight = mge.Parameter(np.ones((1, channels, 1, 1), dtype='float32'))
-        self.bias = mge.Parameter(np.zeros((1, channels, 1, 1), dtype='float32'))
+        self.weight = mge.Parameter(
+            np.ones((1, channels, 1, 1), dtype='float32'))
+        self.bias = mge.Parameter(
+            np.zeros((1, channels, 1, 1), dtype='float32'))
 
     def forward(self, x):
         mu = F.mean(x, axis=1, keepdims=True)
@@ -94,7 +100,7 @@ class TransformerBlock(M.Module):
 
 
 ##########################################################################
-## Fusion modules
+# Fusion modules
 ##########################################################################
 
 class PDConvFuse(M.Module):
@@ -102,8 +108,10 @@ class PDConvFuse(M.Module):
         super().__init__()
         self.feature_num = feature_num
 
-        self.pwconv = M.Conv2d(feature_num * in_channels, in_channels, 1, 1, 0, bias=bias)
-        self.dwconv = M.Conv2d(in_channels, in_channels, 3, 1, 1, bias=bias, groups=in_channels)
+        self.pwconv = M.Conv2d(feature_num * in_channels,
+                               in_channels, 1, 1, 0, bias=bias)
+        self.dwconv = M.Conv2d(in_channels, in_channels,
+                               3, 1, 1, bias=bias, groups=in_channels)
 
     def forward(self, *inp_feats):
         return self.dwconv(F.gelu(self.pwconv(F.concat(inp_feats, axis=1))))
@@ -113,7 +121,8 @@ class SimpleGateFuse(M.Module):
     def __init__(self, in_channels, feature_num=2, bias=True):
         super().__init__()
         hidden_channel = 2 * in_channels
-        self.conv1x1 = M.Conv2d(in_channels * feature_num, hidden_channel, 1, 1, 0, bias=bias)
+        self.conv1x1 = M.Conv2d(in_channels * feature_num,
+                                hidden_channel, 1, 1, 0, bias=bias)
 
     def forward(self, inp_feats):
         x = self.conv1x1(F.concat(inp_feats, axis=1))
@@ -160,7 +169,8 @@ class FeedbackBlock(M.Module):
                 input_feat = self.GFM(input_feat + last_feats_list)
 
             if idx > math.floor(self.num_blocks / 2):
-                input_feat = self.skip_blocks[idx_skip - 1](input_feat, skip_features[-idx_skip])
+                input_feat = self.skip_blocks[idx_skip -
+                                              1](input_feat, skip_features[-idx_skip])
                 idx_skip += 1
 
             input_feat = b(input_feat)
@@ -175,14 +185,14 @@ class FeedbackBlock(M.Module):
 
 class FeedbackRestormer(M.Module):
     def __init__(
-                 self,
-                 in_channels=4,
-                 num_feats=32,
-                 num_blocks=7,
-                 num_steps=2,
-                 num_refine_feats=1,
-                 num_reroute_feats=3,
-                ):
+        self,
+        in_channels=4,
+        num_feats=32,
+        num_blocks=7,
+        num_steps=2,
+        num_refine_feats=1,
+        num_reroute_feats=3,
+    ):
         super().__init__()
 
         self.num_steps = num_steps
@@ -201,11 +211,11 @@ class FeedbackRestormer(M.Module):
         )
 
         self.block = FeedbackBlock(
-                                    num_feats,
-                                    num_blocks,
-                                    num_refine_feats,
-                                    num_reroute_feats
-                                  )
+            num_feats,
+            num_blocks,
+            num_refine_feats,
+            num_reroute_feats
+        )
 
     def forward(self, x):
         shortcut = x
