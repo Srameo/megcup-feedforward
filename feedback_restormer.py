@@ -130,6 +130,11 @@ class SimpleGateFuse(M.Module):
         return F.gelu(x2) * x1
 
 
+##########################################################################
+# Feedback block
+##########################################################################
+
+
 class FeedbackBlock(M.Module):
     def __init__(self,
                  num_feats,
