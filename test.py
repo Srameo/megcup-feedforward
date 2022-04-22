@@ -9,7 +9,7 @@ import os
 
 def make_model(ckpt):
     model = FeedbackRestormer()
-    model.load_state_dict(mge.load(ckpt), strict=False)
+    model.load_state_dict(mge.load(ckpt), strict=True)
     return model
 
 def parse_args():
