@@ -1,11 +1,11 @@
+import os
 import argparse
-from dataset import make_dataloader
 from tqdm import tqdm
 import megengine as mge
-import numpy as np
+
 from feedback_restormer import FeedbackRestormer
+from dataset import make_dataloader
 from utils import pixel_shuffle
-import os
 
 def make_model(ckpt):
     model = FeedbackRestormer()

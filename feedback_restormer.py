@@ -1,5 +1,4 @@
 import math
-from turtle import st
 import numpy as np
 
 import megengine as mge
