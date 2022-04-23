@@ -1,11 +1,14 @@
 # MegCup 2022 Team Feedforward
 
+> This repository is the 3rd place solution (Team Feedforward) in [2022 MegCup RAW image denoising](https://studio.brainpp.com/competition/5?tab=rank).
+
 - [MegCup 2022 Team Feedforward](#megcup-2022-team-feedforward)
   - [Environment](#environment)
     - [Conda](#conda)
     - [Docker](#docker)
   - [Usage](#usage)
-  - [Contributor](#contributor)
+  - [Members](#members)
+  - [Acknowledgement](#acknowledgement)
 
 
 ## Environment
@@ -14,6 +17,7 @@
 
 ```shell
 $ conda create -f ./env.yaml
+$ conda activate megcup
 ```
 
 ### Docker
@@ -36,8 +40,12 @@ $ cp PATH/DATA .
 $ python test.py --data-path ./DATA --checkpoint ./feedback_restormer.mge
 ```
 
-## Contributor
+## Members
 
 - [Zhen Li](https://github.com/Paper99)
 - [Xin Jin](https://github.com/Srameo)
 - [Rui-Qi Wu](https://github.com/RQ-Wu)
+- [Chongyi Li](https://github.com/Li-Chongyi) (Supervisior) \[[Homepage](https://li-chongyi.github.io/)\]
+
+## Acknowledgement
+This project is based on [Restormer](https://github.com/swz30/Restormer), and [Megengine](https://github.com/MegEngine/MegEngine).
