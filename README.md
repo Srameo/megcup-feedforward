@@ -2,11 +2,21 @@
 
 - [MegCup 2022 Team Feedforward](#megcup-2022-team-feedforward)
   - [Environment](#environment)
+    - [Conda](#conda)
+    - [Docker](#docker)
   - [Usage](#usage)
   - [Contributor](#contributor)
 
 
 ## Environment
+
+### Conda
+
+```shell
+$ conda create -f ./env.yaml
+```
+
+### Docker
 
 <font color=red>TBD</font>
 
