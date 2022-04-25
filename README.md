@@ -1,6 +1,6 @@
 # MegCup 2022 Team Feedforward
 
-> This repository is the 3rd place solution (Team Feedforward) in [2022 MegCup RAW image denoising](https://studio.brainpp.com/competition/5?tab=rank).
+> This repository is the official [MegEngine](https://www.megengine.org.cn/) implementation of the 3rd place solution (Team Feedforward) in [2022 MegCup RAW image denoising](https://studio.brainpp.com/competition/5?tab=rank).
 
 - [MegCup 2022 Team Feedforward](#megcup-2022-team-feedforward)
   - [Environment](#environment)
@@ -10,6 +10,8 @@
   - [Members](#members)
   - [Acknowledgement](#acknowledgement)
 
+## Method
+We propose a **F**eed**B**ack-based **Restormer** (**FBRestormer**) for lightweight denoising, the number of parameters in this model is smaller than **100K**!
 
 ## Environment
 
@@ -42,10 +44,10 @@ $ python test.py --data-path ./DATA --checkpoint ./feedback_restormer.mge
 
 ## Members
 
-- [Zhen Li](https://github.com/Paper99)
 - [Xin Jin](https://github.com/Srameo)
 - [Rui-Qi Wu](https://github.com/RQ-Wu)
+- [Zhen Li](https://github.com/Paper99) \[[Homepage](https://paper99.github.io/)\]
 - [Chongyi Li](https://github.com/Li-Chongyi) (Supervisior) \[[Homepage](https://li-chongyi.github.io/)\]
 
 ## Acknowledgement
-This project is based on [Restormer](https://github.com/swz30/Restormer), and [Megengine](https://github.com/MegEngine/MegEngine).
+This project is based on [Restormer](https://github.com/swz30/Restormer), [SRFBN](https://github.com/Paper99/SRFBN_CVPR19), and [GMFN](https://github.com/liqilei/GMFN).
