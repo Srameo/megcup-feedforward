@@ -3,6 +3,7 @@
 > This repository is the official [MegEngine](https://www.megengine.org.cn/) implementation of the 3rd place solution (Team Feedforward) in [2022 MegCup RAW image denoising](https://studio.brainpp.com/competition/5?tab=rank).
 
 - [MegCup 2022 Team Feedforward](#megcup-2022-team-feedforward)
+  - [Method](#method)
   - [Environment](#environment)
     - [Conda](#conda)
     - [Docker](#docker)
@@ -12,6 +13,12 @@
 
 ## Method
 We propose a **F**eed**B**ack-based **Restormer** (**FBRestormer**) for lightweight denoising, the number of parameters in this model is smaller than **100K**!
+
+<img src='assets/arch.png' width=45% height=45%></img> <img src='assets/SGFM.png' width=45% height=45%></img>
+
+Notice That, the restormer blocks in our architecture are modified by replacing the depth-wise 3x3 convlution in the GDFN with depth-wise 5x5 convlution which is also dilated with dilation equals 2.
+
+The simple gated fusion module is used for feedback connections.
 
 ## Environment
 
