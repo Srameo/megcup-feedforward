@@ -54,7 +54,7 @@ $ python test.py --data-path ./DATA --checkpoint ./feedback_restormer.mge
 - [Xin Jin](https://github.com/Srameo)
 - [Rui-Qi Wu](https://github.com/RQ-Wu)
 - [Zhen Li](https://github.com/Paper99) \[[Homepage](https://paper99.github.io/)\]
-- [Chongyi Li](https://github.com/Li-Chongyi) (Supervisior) \[[Homepage](https://li-chongyi.github.io/)\]
+- [Chongyi Li](https://github.com/Li-Chongyi) (Advisor) \[[Homepage](https://li-chongyi.github.io/)\]
 
 ## Acknowledgement
 This project is based on [Restormer](https://github.com/swz30/Restormer), [SRFBN](https://github.com/Paper99/SRFBN_CVPR19), and [GMFN](https://github.com/liqilei/GMFN).
